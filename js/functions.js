@@ -22,6 +22,8 @@ fixData (account);
 function renderTableRows (data) {
     let HTML = '';
     let balance = 0;
+    let totalIncome = 0;
+    let totalExpense = 0;
     
     for (let i=0; i<data.length; i++){
         const row = data[i];
@@ -37,9 +39,20 @@ function renderTableRows (data) {
                     <div class="cell">${balance+newBalance+ ' EUR'}</div>
                 </div>`;
         balance=balance+newBalance;
+        
+        totalIncome+=row.income? row.income : 0;
+        totalExpense+=row.expense? row.expense : 0;
     }
     
-    return document.querySelector('.table-content').innerHTML = HTML;
+    document.querySelector('.table-content').innerHTML = HTML;
+
+    const DOMincome = document.querySelector('.table-footer .cell:nth-child(3)');
+    const DOMexpense = document.querySelector('.table-footer > .cell:nth-child(4)');
+    const DOMbalance = document.querySelector('.table-footer > .cell:nth-child(5)');
+
+    DOMincome.innerText = totalIncome + ' EUR';
+    DOMexpense.innerText = totalExpense + ' EUR';
+    DOMbalance.innerText = balance + ' EUR';
 }
 renderTableRows(acc);
 
