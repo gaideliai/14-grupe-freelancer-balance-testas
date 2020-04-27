@@ -24,12 +24,16 @@ function renderTableRows (data) {
     let balance = 0;
     let totalIncome = 0;
     let totalExpense = 0;
+    let minIncMnth = {index: 1, value: Infinity};
+    let maxIncMnth = {index: 1, value: 0};
+    let minExpMnth = {index: 1, value: Infinity};
+    let maxExpMnth = {index: 1, value: 0};
     
     for (let i=0; i<data.length; i++){
         const row = data[i];
-        row.income ? row.income : 0;
-        row.expense ? row.expense: 0;
-        let newBalance = (row.income? row.income : 0)-(row.expense ? row.expense: 0);
+        const income = row.income ? row.income : 0;
+        const expense = row.expense ? row.expense: 0;
+        const newBalance = income-expense;
         
         HTML+=`<div class="table-row">
                     <div class="cell">${i+1}</div>
@@ -40,8 +44,25 @@ function renderTableRows (data) {
                 </div>`;
         balance=balance+newBalance;
         
-        totalIncome+=row.income? row.income : 0;
-        totalExpense+=row.expense? row.expense : 0;
+        totalIncome+=income;
+        totalExpense+=expense; 
+
+        if (income < minIncMnth.value && income !== 0) {
+            minIncMnth.value = income;
+            minIncMnth.index = i;
+        }
+        if (income > maxIncMnth.value && income !== 0) {
+            maxIncMnth.value = income;
+            maxIncMnth.index = i;
+        }
+        if (expense < minExpMnth.value && expense !== 0) {
+            minExpMnth.value = expense;
+            minExpMnth.index = i;
+        }
+        if (expense > maxExpMnth.value && expense !== 0) {
+            maxExpMnth.value = expense;
+            maxExpMnth.index = i;
+        }
     }
     
     document.querySelector('.table-content').innerHTML = HTML;
@@ -53,6 +74,16 @@ function renderTableRows (data) {
     DOMincome.innerText = totalIncome + ' EUR';
     DOMexpense.innerText = totalExpense + ' EUR';
     DOMbalance.innerText = balance + ' EUR';
-}
-renderTableRows(acc);
 
+    const DOMminIncome = document.querySelector('#minIncome');
+    const DOMmaxIncome = document.querySelector('#maxIncome');
+    const DOMminExpense = document.querySelector('#minExpense');
+    const DOMmaxExpense = document.querySelector('#maxExpense');
+    
+    DOMminIncome.innerText = months[minIncMnth.index];
+    DOMmaxIncome.innerText = months[maxIncMnth.index];
+    DOMminExpense.innerText = months[minExpMnth.index];
+    DOMmaxExpense.innerText = months[maxExpMnth.index];
+}
+
+renderTableRows(acc);
